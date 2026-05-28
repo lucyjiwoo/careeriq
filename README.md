@@ -1,49 +1,51 @@
 # zzuck — AI-Powered SWE Mock Interview Platform
 
-An AI-powered software engineering mock interview platform that provides adaptive question generation, answer evaluation, and personalized feedback.
+An AI-powered software engineering mock interview platform with adaptive question generation, answer evaluation, and personalized feedback.
 
-## Architecture Overview
+## Architecture
 
 | Layer | Stack |
 |---|---|
-| Frontend | React, TypeScript, Vercel |
-| Backend | FastAPI, Python, Docker |
-| AI | OpenAI GPT & Embedding models |
-| Database | PostgreSQL + pgvector |
+| Frontend | React, TypeScript, Vite → Vercel |
+| Backend | FastAPI, Python → AWS ECS Fargate |
+| Worker | Python SQS consumer → AWS ECS Fargate |
+| Database | PostgreSQL + pgvector (AWS RDS) |
 | Storage | AWS S3 |
-| Async Processing | AWS SQS + Python Workers |
-| Infrastructure | AWS ECS Fargate, AWS CDK |
+| Queue | AWS SQS |
+| Infrastructure | AWS CDK (Python) |
 | CI/CD | GitHub Actions |
 
 ## Repository Structure
 
 ```
 zzuck/
-├── frontend/        # React + TypeScript app (deployed to Vercel)
-├── backend/         # FastAPI server (deployed to AWS ECS Fargate)
-├── worker/          # Async Python workers (SQS consumers)
-├── infra/           # AWS CDK infrastructure definitions
+├── frontend/        # React + TypeScript app
+├── backend/         # FastAPI REST API
+├── worker/          # Async SQS worker
+├── infra/           # AWS CDK infrastructure
 └── .github/
-    └── workflows/   # GitHub Actions CI/CD pipelines
+    └── workflows/   # CI pipelines
 ```
 
-## Features
+## Services
 
-- AI-driven interview question generation
-- Adaptive follow-up questions based on answer quality
-- Answer evaluation and feedback via GPT models
-- Weakness memory system using pgvector semantic search
-- Resume and job description ingestion via S3
-- Session history and performance dashboards
+- **[frontend](./frontend/README.md)** — User-facing React app deployed to Vercel
+- **[backend](./backend/README.md)** — REST API serving the frontend and publishing jobs to SQS
+- **[worker](./worker/README.md)** — Background processor consuming SQS jobs (AI evaluation, question generation)
+- **[infra](./infra/README.md)** — AWS CDK stack defining all cloud resources
+
+## CI
+
+| Workflow | Trigger | Jobs |
+|---|---|---|
+| `frontend-ci` | `frontend/**` | lint, build |
+| `backend-ci` | `backend/**`, `worker/**` | pytest (backend + worker) |
+| `infra-ci` | `infra/**` | cdk synth |
 
 ## Getting Started
 
-1. Copy `.env.example` to `.env` and fill in your credentials
-2. See each subdirectory for service-specific setup instructions
+Each service has its own setup guide. Start here:
 
-## Deployment
-
-- **Frontend**: Auto-deployed to Vercel on push to `main`
-- **Backend**: Containerized and deployed to AWS ECS Fargate via GitHub Actions
-- **Worker**: Deployed alongside backend as a separate ECS service
-- **Infra**: Managed via AWS CDK (`infra/`)
+1. Clone the repo
+2. Copy `.env.example` → `.env` in each service directory and fill in credentials
+3. See the README in each subdirectory for local dev instructions
