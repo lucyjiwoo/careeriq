@@ -3,15 +3,13 @@ from openai import OpenAI
 
 router = APIRouter()
 
-client = OpenAI()
+@router.get("/openai")
+def ask_openai(question: str):
+    client = OpenAI()
 
-@router.post("/chat")
-def chat(question: str):
     response = client.responses.create(
         model="gpt-4.1-nano",
         input=question
     )
 
-    return {
-        "message": response.output_text
-    }
+    return {"message": response.output_text}
