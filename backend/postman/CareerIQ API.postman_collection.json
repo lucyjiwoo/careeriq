@@ -1,0 +1,27 @@
+{
+  "info": {
+    "_postman_id": "b0c19a68-4f10-4242-8dbe-b8ec0fb53cb3",
+    "name": "CareerIQ API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55325989",
+    "_collection_link": "https://go.postman.co/collection/55325989-b0c19a68-4f10-4242-8dbe-b8ec0fb53cb3?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "OpenAI Test",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
