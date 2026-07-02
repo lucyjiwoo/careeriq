@@ -16,8 +16,7 @@ export interface SubmitAnswerPayload {
 export interface Question {
   id: number
   question_text: string
-  question_type: 'main' | 'follow_up'
-  order_index: number
+  type: 'main' | 'follow_up'
 }
 
 export interface SessionResponse {
@@ -30,21 +29,27 @@ export interface SessionResponse {
 export interface AnswerResponse {
   feedback: string
   score: number
-  follow_up_question: string | null
-  follow_up_question_id: number | null
+  weaknesses: { category: string; weakness_text: string; severity: string }[]
+  next_question: Question | null
 }
 
 export interface FeedbackItem {
-  question_text: string
-  answer_text: string
-  feedback: string
+  answer_id: number
+  feedback_text: string
   score: number
+}
+
+export interface WeaknessItem {
+  category: string
+  weakness_text: string
+  severity: string
 }
 
 export interface FeedbackResponse {
   session_id: number
-  overall_score: number
+  status: string
   feedbacks: FeedbackItem[]
+  weaknesses: WeaknessItem[]
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -72,7 +77,9 @@ export const submitAnswer = (sessionId: number, payload: SubmitAnswerPayload) =>
   })
 
 export const completeInterview = (sessionId: number) =>
-  request<{ message: string }>(`/interviews/${sessionId}/complete`, { method: 'POST' })
+  request<{ session_id: number; status: string }>(`/interviews/${sessionId}/complete`, {
+    method: 'POST',
+  })
 
 export const getSession = (sessionId: number) =>
   request<SessionResponse>(`/interviews/${sessionId}`)
