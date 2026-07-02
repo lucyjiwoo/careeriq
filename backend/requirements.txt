@@ -1,11 +1,10 @@
 fastapi
 uvicorn
-pytest
-
 sqlalchemy
-psycopg
-alembic
+psycopg[binary]
 pgvector
-
+openai
+python-dotenv
 pydantic
 pydantic-settings
+boto3
