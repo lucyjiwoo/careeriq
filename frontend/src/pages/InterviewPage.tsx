@@ -23,7 +23,9 @@ export default function InterviewPage() {
 
   const sessionIdNum = Number(sessionId)
 
-  const [questions, setQuestions] = useState<Question[]>([])
+  const routerSession = (location.state as { session?: SessionResponse } | null)?.session ?? null
+
+  const [questions, setQuestions] = useState<Question[]>(routerSession?.questions ?? [])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answered, setAnswered] = useState<AnsweredQuestion[]>([])
 
@@ -32,20 +34,15 @@ export default function InterviewPage() {
   const [submitting, setSubmitting] = useState(false)
   const [completing, setCompleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(!routerSession)
 
-  // Load session — prefer router state from InterviewSetupPage, fallback to fetch
+  // Fetch session only when not passed via router state
   useEffect(() => {
-    const state = location.state as { session?: SessionResponse } | null
-    if (state?.session) {
-      setQuestions(state.session.questions)
-    } else {
-      setLoading(true)
-      getSession(sessionIdNum)
-        .then((s) => setQuestions(s.questions))
-        .catch(() => setError('Failed to load session.'))
-        .finally(() => setLoading(false))
-    }
+    if (routerSession) return
+    getSession(sessionIdNum)
+      .then((s) => setQuestions(s.questions))
+      .catch(() => setError('Failed to load session.'))
+      .finally(() => setLoading(false))
   }, [sessionIdNum])
 
   const currentQuestion = questions[currentIndex] ?? null
